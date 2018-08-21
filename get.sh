@@ -29,5 +29,3 @@ url="https://github.com/alexellis/license-check/releases/download/$version/licen
 
 curl -fsSL $url > license-check
 chmod +x license-check
-
-./license-check
