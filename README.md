@@ -19,7 +19,7 @@ Just pass your license strings as arguments when running the tool.
 The following can be added to a Dockerfile to download the license-check binary:
 
 ```Dockerfile
-RUN curl -sSfL https://github.com/alexellis/license-check/releases/download/0.2.2/license-check \
+RUN curl -sSfL https://github.com/alexellis/license-check/releases/download/0.2.3/license-check \
       > /usr/bin/license-check \
       && chmod +x /usr/bin/license-check
 ```
