@@ -14,4 +14,5 @@ WORKDIR /root/
 COPY --from=builder /go/src/github.com/alexellis/license-check/license-check
 COPY --from=builder /go/src/github.com/alexellis/license-check/license-check-darwin
 COPY --from=builder /go/src/github.com/alexellis/license-check/license-check-armhf
+COPY --from=builder /go/src/github.com/alexellis/license-check/license-check-arm64
 
