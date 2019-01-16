@@ -1,5 +1,5 @@
 .PHONY: all
-all: linux darwin arm arm64
+all: linux darwin armhf arm64
 
 .PHONY: linux
 linux:
@@ -9,8 +9,8 @@ linux:
 darwin:
 	GOOS=darwin go build -o license-check-darwin --ldflags "-s -w" -a -installsuffix cgo
 
-.PHONY: arm
-arm:
+.PHONY: armhf
+armhf:
 	GOOS=linux GOARCH=arm GOARM=6 go build -o license-check-armhf --ldflags "-s -w" -a -installsuffix cgo
 
 .PHONY: arm64
