@@ -23,9 +23,11 @@ suffix="-darwin"
 ;;
 esac
 
-version=$(curl -sI https://github.com/alexellis/license-check/releases/latest | grep Location | awk -F"/" '{ printf "%s", $NF }' | tr -d '\r')
+version=$(curl -sI https://github.com/teamserverless/license-check/releases/latest | grep Location | awk -F"/" '{ printf "%s", $NF }' | tr -d '\r')
 
-url="https://github.com/alexellis/license-check/releases/download/$version/license-check${suffix}"
+url="https://github.com/teamserverless/license-check/releases/download/$version/license-check${suffix}"
+
+echo "Downloading $url.."
 
 curl -fsSL $url > license-check
 chmod +x license-check
