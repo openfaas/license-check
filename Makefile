@@ -1,5 +1,5 @@
 .PHONY: all
-all: linux darwin armhf arm64
+all: linux darwin armhf arm64 s390x
 
 .PHONY: linux
 linux:
@@ -16,3 +16,8 @@ armhf:
 .PHONY: arm64
 arm64:
 	GOOS=linux GOARCH=arm64 go build -o license-check-arm64 --ldflags "-s -w" -a -installsuffix cgo
+
+.PHONY: s390x
+s390x:
+	GOOS=linux GOARCH=s390x go build -o license-check-s390x --ldflags "-s -w" -a -installsuffix cgo
+

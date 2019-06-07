@@ -11,8 +11,8 @@ FROM alpine:3.9
 
 WORKDIR /root/
 
-COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check
-COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-darwin
-COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-armhf
-COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-arm64
-
+COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check .
+COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-darwin .
+COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-armhf .
+COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-arm64 .
+COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-s390x .
