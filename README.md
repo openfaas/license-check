@@ -43,6 +43,15 @@ Examples of usage in OpenFaaS:
 * https://github.com/openfaas/faas-cli/blob/master/Dockerfile
 * https://github.com/openfaas/faas/blob/master/gateway/Dockerfile
 
-## Development / hacking
+## Contributing
+
+###
+
+If you'd like to submit a PR or request a feature, please raise an issue first.
+
+Then once the issue is cleared for working on, go ahead and raise a PR making sure to read the [CONTRIBUTING](./CONTRIBUTING.md) guide.
+
+### Development / hacking
 
 Go 1.8 or newer is required
+
