@@ -32,11 +32,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	matchValidFile := func(path string) bool {
-		return strings.HasSuffix(path, ".go") &&
-			strings.Contains(path, "/vendor/") == false
-	}
-
 	licenseAudit := func(path string) bool {
 
 		if verbose {
@@ -101,4 +96,16 @@ func walk(rootPath string, passLicenseAudit func(string) bool, matchValidFile fu
 	})
 
 	return violations, err
+}
+
+func matchValidFile(path string) bool {
+	// capture cases where the path is relative and doesn't start with a slash,
+	// e.g. vendor/github.com/*
+	abspath, err := filepath.Abs(path)
+	if err != nil {
+		abspath = path
+	}
+
+	return strings.HasSuffix(abspath, ".go") &&
+		strings.Contains(abspath, "/vendor/") == false
 }
