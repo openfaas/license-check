@@ -25,6 +25,11 @@ suffix="-darwin"
     suffix="s390x"
     ;;
     esac
+    case $arch in
+    "ppc64le")
+    suffix="-ppc64le"
+    ;;
+    esac
 ;;
 esac
 

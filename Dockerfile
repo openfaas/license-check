@@ -16,3 +16,4 @@ COPY --from=builder /go/src/github.com/teamserverless/license-check/license-chec
 COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-armhf .
 COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-arm64 .
 COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-s390x .
+COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-ppc64le .
