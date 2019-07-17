@@ -12,6 +12,8 @@ import (
 
 var (
 	verbose bool
+	//GitCommit git commit SHA
+	GitCommit string
 )
 
 func main() {
