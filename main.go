@@ -17,12 +17,21 @@ var (
 )
 
 func main() {
-	var filePath string
+	var (
+		filePath string
+		version  bool
+	)
 	flag.StringVar(&filePath, "path", "", "path to scan for licensing")
 	flag.BoolVar(&verbose, "verbose", false, "verbose output")
+	flag.BoolVar(&version, "version", false, "Print version")
 	flag.Parse()
 
 	authorArgs := flag.Args()
+
+	if version {
+		fmt.Printf("Commit: %s\n", GitCommit)
+		os.Exit(0)
+	}
 
 	if len(filePath) == 0 {
 		fmt.Println("-path is required")
