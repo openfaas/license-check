@@ -1,0 +1,36 @@
+language: go
+
+go:
+  - 1.11.x
+
+services:
+  - docker
+
+script:
+  - make
+
+  before_deploy:
+  - "./ci/hashgen.sh"
+
+
+deploy:
+  provider: releases
+  api_key:
+    secure: IFa7JoaZl5LO3jhhbP9b+MftOcvM/LSyRPBs6eYfkbelJ0hqhgpD0yMDDd2n+GRyuKXCRxLhtrLqLnWSOXO2T1FwGkbN83xPopyNsPazdcl1S3YeLo07mkWIdekNOWpsZ5kQVMFMcmfQVkP3YuaW8CXOXKAm++31UWL3mFMvcoQHp2tt5M4YzOSPWONZ0g2k9IAvObFvZ8MeyAL1ny/rtwef+ZBapfmSg0uytiG6WZi2ebWVteEMilp/ElkuHfaRK5ru6+Iitmdyxkkuj6sE9AneNshvZqW2VXEPxHEjbyIpHN8+PyeQrMKUQNP/qK4DjsJBmKEuFzIK+mXFFsQZ9otaRv4HiAh3xT9Hc0LKUCewFdJ2hHX3i4hCaUCv6+2PVB+owCpi73jYZudACEtoP7ZggsQdWUb27xZoL28auLy1kiEfCb+9yoeX8WI0vZgvBMvRj4lYvNh/nQ3vdeZvipAgkBzf276gnK6AUBt50IDmpv01b/5geEBjmH3Ku2Gx73nxmwVVTpB+yNw2iSFgRVfQnvpblEzeTL4WpV6gN4boMsFJpjzZ6pW2vnu+kvjL4/XTaBcVk9j7XwlGa1Xu8QUmqO1I1eBnNqaK/yrcyvAPbL3up898hugSEmdiPVOWxCsMpXZ7UM0gQhBnElVslHHjUGSDhXYnKjjmNjN1aLI=
+  file: 
+    - license-check
+    - license-check-arm64
+    - license-check-arm64.sha256
+    - license-check-armhf
+    - license-check-armhf.sha256
+    - license-check-darwin
+    - license-check-darwin.sha256
+    - license-check-ppc64le
+    - license-check-ppc64le.sha256
+    - license-check-s390x
+    - license-check-s390x.sha256
+    - license-check.sha256
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: viveksyngh/license-check
