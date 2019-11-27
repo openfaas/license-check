@@ -47,8 +47,6 @@ Examples of usage in OpenFaaS:
 
 ## Contributing
 
-###
-
 If you'd like to submit a PR or request a feature, please raise an issue first.
 
 Then once the issue is cleared for working on, go ahead and raise a PR making sure to read the [CONTRIBUTING](./CONTRIBUTING.md) guide.
