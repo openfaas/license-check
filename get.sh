@@ -22,7 +22,7 @@ suffix="-darwin"
     esac
     case $arch in
     "s390x")
-    suffix="s390x"
+    suffix="-s390x"
     ;;
     esac
     case $arch in
