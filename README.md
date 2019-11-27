@@ -1,6 +1,8 @@
 license-check
 ==================
 
+[![Build Status](https://travis-ci.com/teamserverless/license-check.svg?branch=master)](https://travis-ci.com/teamserverless/license-check)
+
 This tool scans all files within a given path for copyright authors. It flags up any files which have authors not specified in a list of given strings. 
 
 The tool is currently in use across the [OpenFaaS organisation](https://github.com/openfaas/) on GitHub.
