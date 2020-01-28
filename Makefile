@@ -1,7 +1,9 @@
 .GIT_COMMIT=$(shell git rev-parse HEAD)
 
+export CGO_ENABLED=0
+
 .PHONY: all
-all: linux darwin armhf arm64 s390x ppc64le
+all: linux darwin armhf arm64 s390x ppc64le windows
 
 .PHONY: linux
 linux:
@@ -39,3 +41,8 @@ ppc64le:
 	-X main.GitCommit=${.GIT_COMMIT}" \
 	-a -installsuffix cgo
 
+.PHONY: windows
+windows:
+	GOOS=windows go build -o license-check.exe  --ldflags "-s -w \
+	-X main.GitCommit=${.GIT_COMMIT}" \
+	-a -installsuffix cgo

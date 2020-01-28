@@ -1,13 +1,11 @@
-FROM golang:1.10.4-alpine as builder
-
-RUN apk add --no-cache make
+FROM golang:1.13 as builder
 
 WORKDIR /go/src/github.com/teamserverless/license-check
 COPY . .
 
 RUN make
 
-FROM alpine:3.9
+FROM scratch
 
 WORKDIR /root/
 
@@ -17,3 +15,4 @@ COPY --from=builder /go/src/github.com/teamserverless/license-check/license-chec
 COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-arm64 .
 COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-s390x .
 COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-ppc64le .
+COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check.exe .
