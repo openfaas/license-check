@@ -16,18 +16,11 @@ after_success:
   - if [ ! -z "$TRAVIS_TAG" ] ; then
       export DOCKER_CLI_EXPERIMENTAL=enabled
 
+      ./build.sh
       ./make_tags.sh
       ./push_images.sh
       ./make_manifest.sh
       docker push $DOCKER_NS/$NAME:$TRAVIS_TAG
-
-      echo $QUAY_PASSWORD | docker login -u=$QUAY_USERNAME --password-stdin quay.io;
-
-      DOCKER_NS=quay.io/$DOCKER_NS
-      docker push quay.io/$DOCKER_NS/$NAME:$TRAVIS_TAG-armhf;
-      docker push quay.io/$DOCKER_NS/$NAME:$TRAVIS_TAG-arm64;
-      docker push quay.io/$DOCKER_NS/$NAME:$TRAVIS_TAG-windows;
-      docker push quay.io/$DOCKER_NS/$NAME:$TRAVIS_TAG-x86_64;
       fi
 before_deploy:
 - "./ci/hashgen.sh"
