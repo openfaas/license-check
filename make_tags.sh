@@ -4,6 +4,8 @@ DOCKER_NS=${DOCKER_NS:-openfaas}
 TAG=${TRAVIS_TAG:-latest}
 NAME=license-check
 
+docker tag $DOCKER_NS/$NAME:latest-dev-ppc64le $DOCKER_NS/$NAME:$TAG-ppc64le;
+docker tag $DOCKER_NS/$NAME:latest-dev-s390x $DOCKER_NS/$NAME:$TAG-s390x;
 docker tag $DOCKER_NS/$NAME:latest-dev-darwin $DOCKER_NS/$NAME:$TAG-darwin;
 docker tag $DOCKER_NS/$NAME:latest-dev-armhf $DOCKER_NS/$NAME:$TAG-armhf;
 docker tag $DOCKER_NS/$NAME:latest-dev-arm64 $DOCKER_NS/$NAME:$TAG-arm64;

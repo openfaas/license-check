@@ -10,6 +10,8 @@ else
     docker build -t $DOCKER_NS/$NAME:build .
 fi
 
+docker build --no-cache --build-arg PLATFORM="-ppc64le" -t $DOCKER_NS/$NAME:latest-dev-ppc64le . -f Dockerfile.packager
+docker build --no-cache --build-arg PLATFORM="-s390x" -t $DOCKER_NS/$NAME:latest-dev-s390x . -f Dockerfile.packager
 docker build --no-cache --build-arg PLATFORM="-darwin" -t $DOCKER_NS/$NAME:latest-dev-darwin . -f Dockerfile.packager
 docker build --no-cache --build-arg PLATFORM="-armhf" -t $DOCKER_NS/$NAME:latest-dev-armhf . -f Dockerfile.packager
 docker build --no-cache --build-arg PLATFORM="-arm64" -t $DOCKER_NS/$NAME:latest-dev-arm64 . -f Dockerfile.packager
