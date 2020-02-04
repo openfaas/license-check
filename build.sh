@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOCKER_NS=${DOCKER_NS:-openfaas}
+DOCKER_NS=${DOCKER_NS:-teamserverless}
 NAME=license-check
 
 if [ ! "$http_proxy" = "" ]

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOCKER_NS=${DOCKER_NS:-openfaas}
+DOCKER_NS=${DOCKER_NS:-teamserverless}
 TAG=${TRAVIS_TAG:-latest}
 NAME=license-check
 

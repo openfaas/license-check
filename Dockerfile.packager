@@ -1,4 +1,4 @@
-FROM openfaas/license-check:build as build
+FROM teamserverless/license-check:build as build
 FROM scratch
 
 ARG PLATFORM
