@@ -16,7 +16,30 @@ Usage:
 
 Just pass your license strings as arguments when running the tool.
 
-### Downloading
+### Downloading with a multi-stage Dockerfile
+
+This is the fastest method to download for use with Docker and includes multi-arch support.
+
+Example with Golang:
+
+```Dockerfile
+FROM teamserverless/license-check:0.3.6 as license-check
+
+FROM golang:1.13 as build
+ENV CGO_ENABLED=0
+ENV GO111MODULE=on
+ENV GOFLAGS=-mod=vendor
+
+COPY --from=license-check /license-check /usr/bin/
+
+RUN mkdir -p /go/src/github.com/openfaas/faas-netes
+WORKDIR /go/src/github.com/openfaas/faas-netes
+COPY . .
+
+RUN license-check -path /go/src/github.com/openfaas/faas-netes/ --verbose=false "Alex Ellis" "OpenFaaS Author(s)"
+```
+
+### Downloading via curl
 
 The following can be added to a Dockerfile to download the license-check binary:
 
