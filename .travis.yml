@@ -17,14 +17,14 @@ after_success:
       export NAME=license-check;
       fi
   - if [ ! -z "$TRAVIS_TAG" ] ; then
-      export DOCKER_CLI_EXPERIMENTAL=enabled
+      export DOCKER_CLI_EXPERIMENTAL=enabled;
 
-      ./build.sh
-      ./make_tags.sh
-      ./push_images.sh
-      ./make_manifest.sh
-      echo docker push $DOCKER_NS/$NAME:$TRAVIS_TAG
-      docker push $DOCKER_NS/$NAME:$TRAVIS_TAG
+      ./build.sh;
+      ./make_tags.sh;
+      ./push_images.sh;
+      ./make_manifest.sh;
+      echo docker push $DOCKER_NS/$NAME:$TRAVIS_TAG;
+      docker push $DOCKER_NS/$NAME:$TRAVIS_TAG;
       fi
 before_deploy:
 - "./ci/hashgen.sh"
