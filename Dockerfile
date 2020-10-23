@@ -11,7 +11,7 @@ ARG VERSION
 ENV GO111MODULE=on
 ENV CGO_ENABLED=0
 ENV GOPATH=/go/src/
-WORKDIR /go/src/github.com/inlets/inlets
+WORKDIR /go/src/github.com/teamserverles/license-check
 
 COPY .git               .git
 COPY main.go            .
