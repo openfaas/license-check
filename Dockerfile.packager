@@ -1,6 +1,0 @@
-FROM teamserverless/license-check:build as build
-FROM scratch
-
-ARG PLATFORM
-
-COPY --from=build /root/license-check$PLATFORM ./license-check

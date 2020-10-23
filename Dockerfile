@@ -1,18 +1,41 @@
-FROM golang:1.13 as builder
+FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:1.15-alpine as builder
 
-WORKDIR /go/src/github.com/teamserverless/license-check
-COPY . .
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
 
-RUN make
+ARG GIT_COMMIT
+ARG VERSION
+
+ENV GO111MODULE=on
+ENV CGO_ENABLED=0
+ENV GOPATH=/go/src/
+WORKDIR /go/src/github.com/inlets/inlets
+
+COPY .git               .git
+COPY main.go            .
+COPY go.mod             .
+
+RUN test -z "$(gofmt -l $(find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./function/vendor/*"))" || { echo "Run \"gofmt -s -w\" on your Golang code"; exit 1; } \
+    && CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go test -mod=vendor $(go list ./... | grep -v /vendor/) -cover
+
+# add user in this stage because it cannot be done in next stage which is built from scratch
+# in next stage we'll copy user and group information from this stage
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} CGO_ENABLED=0 go build -mod=vendor -ldflags "-s -w -X main.GitCommit=${GIT_COMMIT} -X main.Version=${VERSION}" -a -installsuffix cgo -o /usr/bin/inlets \
+    && addgroup -S app \
+    && adduser -S -g app app
 
 FROM scratch
 
-WORKDIR /root/
+COPY --from=builder /etc/passwd /etc/group /etc/
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /usr/bin/inlets /usr/bin/
 
-COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check .
-COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-darwin .
-COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-armhf .
-COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-arm64 .
-COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-s390x .
-COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check-ppc64le .
-COPY --from=builder /go/src/github.com/teamserverless/license-check/license-check.exe .
+USER app
+EXPOSE 80
+
+VOLUME /tmp/
+
+ENTRYPOINT ["/usr/bin/inlets"]
+CMD ["--help"]
