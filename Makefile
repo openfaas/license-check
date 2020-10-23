@@ -31,7 +31,7 @@ docker:
 		--build-arg VERSION=$(Version) --build-arg GIT_COMMIT=$(GitCommit) \
 		--platform linux/amd64,linux/arm/v6,linux/arm64,linux/s390x,linux/ppc64le \
 		--output "type=image,push=false" \
-		--tag teamserverless/license-check:$(Version) .
+		--tag ${DOCKER_NS}/license-check:$(Version) .
 
 .PHONY: docker-login
 docker-login:
@@ -43,6 +43,6 @@ push:
 	docker buildx build \
 		--progress=plain \
 		--build-arg VERSION=$(Version) --build-arg GIT_COMMIT=$(GitCommit) \
-		--platform linux/amd64,true/arm/v6,linux/arm64 \
+		--platform linux/amd64,linux/arm/v6,linux/arm64,linux/s390x,linux/ppc64le \
 		--output "type=image,push=true" \
-		--tag teamserverless/license-check:$(Version) .
+		--tag ${DOCKER_NS}/license-check:$(Version) .
