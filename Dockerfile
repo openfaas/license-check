@@ -21,7 +21,7 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go test -mod=vendor $(go
 
 # add user in this stage because it cannot be done in next stage which is built from scratch
 # in next stage we'll copy user and group information from this stage
-RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} CGO_ENABLED=0 go build -mod=vendor -ldflags "-s -w -X main.GitCommit=${GIT_COMMIT} -X main.Version=${VERSION}" -a -installsuffix cgo -o /usr/bin/inlets \
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} CGO_ENABLED=0 go build -mod=vendor -ldflags "-s -w -X main.GitCommit=${GIT_COMMIT} -X main.Version=${VERSION}" -a -installsuffix cgo -o /usr/bin/license-check \
     && addgroup -S app \
     && adduser -S -g app app
 
@@ -29,12 +29,11 @@ FROM scratch
 
 COPY --from=builder /etc/passwd /etc/group /etc/
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /usr/bin/inlets /usr/bin/
+COPY --from=builder /usr/bin/license-check /
 
 USER app
-EXPOSE 80
 
 VOLUME /tmp/
 
-ENTRYPOINT ["/usr/bin/inlets"]
+ENTRYPOINT ["/license-check"]
 CMD ["--help"]
