@@ -9,6 +9,10 @@ export DOCKER_CLI_EXPERIMENTAL=enabled
 .PHONY: all
 all: docker
 
+.PHONY: lint
+lint:
+	test -z $(shell gofmt -e -l ./) || echo "Formatting errors, run \"gofmt -s -w ./\""
+
 .PHONY: dist
 dist:
 	CGO_ENABLED=0 GOOS=linux go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/license-check
