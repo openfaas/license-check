@@ -17,8 +17,7 @@ COPY .git               .git
 COPY main.go            .
 COPY go.mod             .
 
-RUN test -z "$(gofmt -l $(find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./function/vendor/*"))" || { echo "Run \"gofmt -s -w\" on your Golang code"; exit 1; } \
-    && CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go test -mod=vendor $(go list ./... | grep -v /vendor/) -cover
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go test -mod=vendor $(go list ./... | grep -v /vendor/) -cover
 
 # add user in this stage because it cannot be done in next stage which is built from scratch
 # in next stage we'll copy user and group information from this stage
