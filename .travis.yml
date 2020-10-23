@@ -1,33 +1,35 @@
+sudo: required
 language: go
+
+dist: bionic
+
 go:
 - "1.13"
-services:
-- docker
-addons:
-  apt:
-    packages:
-    - docker-ce
-script:
-- make
-after_success:
-  - if [ -z $DOCKER_NS ] ; then
-      export DOCKER_NS=teamserverless;
-      fi
-  - if [ -z $NAME ] ; then
-      export NAME=license-check;
-      fi
-  - if [ ! -z "$TRAVIS_TAG" ] ; then
-      export DOCKER_CLI_EXPERIMENTAL=enabled;
 
-      ./build.sh;
-      ./make_tags.sh;
-      ./push_images.sh;
-      ./make_manifest.sh;
-      echo docker push $DOCKER_NS/$NAME:$TRAVIS_TAG;
-      docker push $DOCKER_NS/$NAME:$TRAVIS_TAG;
-      fi
+script:
+- docker buildx version
+- make docker || travis_terminate 1;
+- make dist
+
+before_script:
+  - sudo rm -rf /var/lib/apt/lists/*
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) edge"
+  - sudo apt-get update -qy
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  - mkdir -vp ~/.docker/cli-plugins/
+  - curl --silent -L "https://github.com/docker/buildx/releases/download/v0.3.0/buildx-v0.3.0.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+  - chmod a+x ~/.docker/cli-plugins/docker-buildx
+  - sudo systemctl start docker
+  - ./hack/install-buildx.sh
+
+after_success:
+  - make docker-login
+  - make push
+
 before_deploy:
-- "./ci/hashgen.sh"
+  - ./ci/hashgen.sh
+
 deploy:
   provider: releases
   api_key:
@@ -38,6 +40,8 @@ deploy:
   - license-check-arm64.sha256
   - license-check-armhf
   - license-check-armhf.sha256
+  - license-check-armv6
+  - license-check-armv6.sha256
   - license-check-darwin
   - license-check-darwin.sha256
   - license-check-ppc64le
@@ -48,3 +52,8 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
+
+env: GO111MODULE=off
+
+before_deploy:
+- "./ci/hashgen.sh"

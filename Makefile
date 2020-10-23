@@ -1,48 +1,44 @@
-.GIT_COMMIT=$(shell git rev-parse HEAD)
+Version := $(shell git describe --tags --dirty)
+GitCommit := $(shell git rev-parse HEAD)
+LDFLAGS := "-s -w -X main.Version=$(Version) -X main.GitCommit=$(GitCommit)"
 
-export CGO_ENABLED=0
+# docker manifest command will work with Docker CLI 18.03 or newer
+# but for now it's still experimental feature so we need to enable that
+export DOCKER_CLI_EXPERIMENTAL=enabled
 
 .PHONY: all
-all: linux darwin armhf arm64 s390x ppc64le windows
+all: docker
 
-.PHONY: linux
-linux:
-	GOOS=linux go build -o license-check --ldflags "-s -w \
-	-X main.GitCommit=${.GIT_COMMIT}" \
-	-a -installsuffix cgo
+.PHONY: dist
+dist:
+	CGO_ENABLED=0 GOOS=linux go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/license-check
+	CGO_ENABLED=0 GOOS=darwin go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/license-check-darwin
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/license-check.exe
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=6 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/license-check-armhf
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/license-check-arm64
+	CGO_ENABLED=0 GOOS=linux GOARCH=s390x go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/license-check-s390x
+	CGO_ENABLED=0 GOOS=linux GOARCH=ppc64le go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/license-check-ppc64le
 
-.PHONY: darwin
-darwin:
-	GOOS=darwin go build -o license-check-darwin --ldflags "-s -w \
-	-X main.GitCommit=${.GIT_COMMIT}" \
-	-a -installsuffix cgo
+.PHONY: docker
+docker:
+	@docker buildx create --use --name=multiarch --node multiarch && \
+	docker buildx build \
+		--progress=plain \
+		--build-arg VERSION=$(Version) --build-arg GIT_COMMIT=$(GitCommit) \
+		--platform linux/amd64,linux/arm/v6,linux/arm64,linux/s390x,linux/ppc64le \
+		--output "type=image,push=false" \
+		--tag teamserverless/license-check:$(Version) .
 
-.PHONY: armhf
-armhf:
-	GOOS=linux GOARCH=arm GOARM=6 go build -o license-check-armhf --ldflags "-s -w \
-	-X main.GitCommit=${.GIT_COMMIT}" \
-	-a -installsuffix cgo
+.PHONY: docker-login
+docker-login:
+	echo -n "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
 
-.PHONY: arm64
-arm64:
-	GOOS=linux GOARCH=arm64 go build -o license-check-arm64 --ldflags "-s -w \
-	-X main.GitCommit=${.GIT_COMMIT}" \
-	-a -installsuffix cgo
-
-.PHONY: s390x
-s390x:
-	GOOS=linux GOARCH=s390x go build -o license-check-s390x --ldflags "-s -w \
-	-X main.GitCommit=${.GIT_COMMIT}" \
-	-a -installsuffix cgo
-
-.PHONY: ppc64le
-ppc64le:
-	GOOS=linux GOARCH=ppc64le go build -o license-check-ppc64le --ldflags "-s -w \
-	-X main.GitCommit=${.GIT_COMMIT}" \
-	-a -installsuffix cgo
-
-.PHONY: windows
-windows:
-	GOOS=windows go build -o license-check.exe  --ldflags "-s -w \
-	-X main.GitCommit=${.GIT_COMMIT}" \
-	-a -installsuffix cgo
+.PHONY: push
+push:
+	@docker buildx create --use --name=multiarch --node multiarch && \
+	docker buildx build \
+		--progress=plain \
+		--build-arg VERSION=$(Version) --build-arg GIT_COMMIT=$(GitCommit) \
+		--platform linux/amd64,true/arm/v6,linux/arm64 \
+		--output "type=image,push=true" \
+		--tag teamserverless/license-check:$(Version) .
