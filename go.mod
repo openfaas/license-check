@@ -1,3 +1,3 @@
-module github.com/teamserverless/license-check
+module github.com/openfaas/license-check
 
-go 1.13
+go 1.16

@@ -21,6 +21,8 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
+      - name: Run unit tests
+        run: make test
       - name: Make local binaries
         run: make dist
 

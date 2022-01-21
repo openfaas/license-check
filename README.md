@@ -1,7 +1,7 @@
 license-check
 ==================
 
-[![Build Status](https://travis-ci.com/teamserverless/license-check.svg?branch=master)](https://travis-ci.com/teamserverless/license-check)
+[![build](https://github.com/openfaas/license-check/actions/workflows/build.yaml/badge.svg)](https://github.com/openfaas/license-check/actions/workflows/build.yaml)
 
 This tool scans all files within a given path for copyright authors. It flags up any files which have authors not specified in a list of given strings. 
 
@@ -11,7 +11,9 @@ The tool is currently in use across the [OpenFaaS organisation](https://github.c
 
 ```
 Usage:
-  license-check -root $HOME/go/src/github.com/openfaas -verbose=false "Alex Ellis" "OpenFaaS Author(s)"
+
+$ license-check -root $HOME/go/src/github.com/openfaas \
+    -verbose=false "Alex Ellis" "OpenFaaS Author(s)"
 ```
 
 Just pass your license strings as arguments when running the tool.
@@ -40,7 +42,7 @@ RUN license-check -path /go/src/github.com/openfaas/faas-netes/ --verbose=false 
 The following can be added to a Dockerfile to download the license-check binary:
 
 ```Dockerfile
-RUN curl -sSfL https://github.com/teamserverless/license-check/releases/download/0.2.3/license-check \
+RUN curl -sSfL https://github.com/openfaas/license-check/releases/download/0.2.3/license-check \
       > /usr/bin/license-check \
       && chmod +x /usr/bin/license-check
 ```
@@ -48,7 +50,7 @@ RUN curl -sSfL https://github.com/teamserverless/license-check/releases/download
 If you want to automatically download the correct binary for Linux/Darwin or armhf (Raspberry Pi) then use the `get.sh` script with the following:
 
 ```Dockerfile
-RUN curl -sLSf https://raw.githubusercontent.com/teamserverless/license-check/master/get.sh | sh
+RUN curl -sLSf https://raw.githubusercontent.com/openfaas/license-check/master/get.sh | sh
 ```
 
 ### Example usage

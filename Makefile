@@ -13,6 +13,10 @@ all: docker
 lint:
 	test -z $(shell gofmt -e -l ./) || echo "Formatting errors, run \"gofmt -s -w ./\""
 
+.PHONY: test
+test:
+	go test ./...
+
 .PHONY: dist
 dist:
 	CGO_ENABLED=0 GOOS=linux go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/license-check

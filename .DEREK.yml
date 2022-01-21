@@ -1,8 +1,1 @@
-curators:
- - alexellis
- 
-features:
- - dco_check
- - comments
- - pr_description_required
- - release_notes
+redirect: https://raw.githubusercontent.com/openfaas/faas/master/.DEREK.yml

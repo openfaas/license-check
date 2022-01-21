@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - '*'
+
 jobs:
   publish-binaries:
     strategy:
@@ -25,6 +26,8 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
+      - name: Run unit tests
+        run: make test
       - name: Make local binaries
         run: make dist
       - name: Upload release binaries
@@ -74,6 +77,9 @@ jobs:
           file: ./Dockerfile
           outputs: "type=registry,push=true"
           platforms: linux/amd64,linux/arm/v7,linux/arm64
+          build-args: |
+            Version=${{ steps.get_tag.outputs.TAG }}
+            GitCommit=${{ github.sha }}
           tags: |
             ghcr.io/${{ steps.get_repo_owner.outputs.repo_owner }}/license-check:${{ github.sha }}
             ghcr.io/${{ steps.get_repo_owner.outputs.repo_owner }}/license-check:${{ steps.get_tag.outputs.TAG }}
