@@ -20,8 +20,6 @@ dist:
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/license-check.exe
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=6 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/license-check-armhf
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/license-check-arm64
-	CGO_ENABLED=0 GOOS=linux GOARCH=s390x go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/license-check-s390x
-	CGO_ENABLED=0 GOOS=linux GOARCH=ppc64le go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/license-check-ppc64le
 
 .PHONY: docker
 docker:
@@ -29,7 +27,7 @@ docker:
 	docker buildx build \
 		--progress=plain \
 		--build-arg VERSION=$(Version) --build-arg GIT_COMMIT=$(GitCommit) \
-		--platform linux/amd64,linux/arm/v6,linux/arm64,linux/s390x,linux/ppc64le \
+		--platform linux/amd64,linux/arm/v6,linux/arm64 \
 		--output "type=image,push=false" \
 		--tag ${DOCKER_NS}/license-check:$(Version) .
 
@@ -43,6 +41,6 @@ push:
 	docker buildx build \
 		--progress=plain \
 		--build-arg VERSION=$(Version) --build-arg GIT_COMMIT=$(GitCommit) \
-		--platform linux/amd64,linux/arm/v6,linux/arm64,linux/s390x,linux/ppc64le \
+		--platform linux/amd64,linux/arm/v6,linux/arm64 \
 		--output "type=image,push=true" \
 		--tag ${DOCKER_NS}/license-check:$(Version) .
