@@ -25,8 +25,8 @@ This is the fastest method to download for use with Docker and includes multi-ar
 Example with Golang:
 
 ```Dockerfile
-FROM teamserverless/license-check:0.3.6 as license-check
-FROM golang:1.18 as build
+FROM ghcr.io/teamserverless/license-check:0.4.1 as license-check
+FROM golang:1.20 as build
 
 COPY --from=license-check /license-check /usr/bin/
 
@@ -74,5 +74,5 @@ Then once the issue is cleared for working on, go ahead and raise a PR making su
 
 ### Development / hacking
 
-Go 1.8 or newer is required
+Go 1.19 or newer is required
 
