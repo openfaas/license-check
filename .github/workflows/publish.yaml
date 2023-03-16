@@ -7,12 +7,9 @@ on:
 
 jobs:
   publish-binaries:
-    strategy:
-      matrix:
-        go-version: [1.18.x]
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     permissions:
+      contents: write
       checks: write
       actions: read
       issues: read
@@ -25,7 +22,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v3
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: 1.19.x
       - name: Run unit tests
         run: make test
       - name: Make local binaries
@@ -38,10 +35,7 @@ jobs:
           asset_paths: '["./bin/license-check*"]'
 
   publish-containers:
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     permissions:
       actions: read
       checks: write
