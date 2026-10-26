@@ -1,18 +1,21 @@
 #!/bin/sh
 
-uname=$(uname)
+uname_s=$(uname -s)
+uname_m=$(uname -m)
 
 suffix=""
-case $uname in
-"Linux")
-    arch=$(uname -m)
-    echo $arch
-    case $arch in
-    "aarch64")
+case "$uname_s/$uname_m" in
+"Linux/x86_64")
+    suffix=""
+    ;;
+"Linux/aarch64")
     suffix="-arm64"
     ;;
-    esac
-;;
+*)
+    echo "Unsupported platform: $uname_s/$uname_m" >&2
+    echo "license-check is published for Linux amd64 and arm64 only" >&2
+    exit 1
+    ;;
 esac
 
 version=$(curl -sI https://github.com/openfaas/license-check/releases/latest | grep Location | awk -F"/" '{ printf "%s", $NF }' | tr -d '\r')
