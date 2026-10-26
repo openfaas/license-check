@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
@@ -12,8 +12,10 @@ import (
 
 var (
 	verbose bool
-	//GitCommit git commit SHA
+	// GitCommit is the git commit SHA at build time
 	GitCommit string
+	// Version is the release version at build time
+	Version string
 )
 
 func main() {
@@ -29,7 +31,7 @@ func main() {
 	authorArgs := flag.Args()
 
 	if version {
-		fmt.Printf("Commit: %s\n", GitCommit)
+		fmt.Printf("Version: %s\tCommit: %s\n", Version, GitCommit)
 		os.Exit(0)
 	}
 
@@ -49,29 +51,13 @@ func main() {
 			fmt.Printf("Checking %s for %s\n", path, authorArgs)
 		}
 
-		data, err := ioutil.ReadFile(path)
-		var fileData = string(data)
+		data, err := os.ReadFile(path)
 		if err != nil {
 			log.Printf("Error - %s", err)
 			return false
 		}
 
-		valid := true
-
-		// Found "// Copyright (c) "
-		if strings.HasPrefix(fileData, "// Copyright (c) ") {
-			match := false
-
-			for _, validAuthor := range authorArgs {
-				if strings.HasPrefix(fileData, fmt.Sprintf("// Copyright (c) %s", validAuthor)) {
-					match = true
-				}
-			}
-
-			valid = match
-		}
-
-		return valid
+		return hasValidLicense(string(data), authorArgs)
 	}
 
 	violations, err := walk(filePath, licenseAudit, matchValidFile)
@@ -91,14 +77,32 @@ func main() {
 	}
 }
 
+func hasValidLicense(fileData string, validAuthors []string) bool {
+	// Found "// Copyright (c) "
+	if !strings.HasPrefix(fileData, "// Copyright (c) ") {
+		return true
+	}
+
+	for _, validAuthor := range validAuthors {
+		if strings.HasPrefix(fileData, fmt.Sprintf("// Copyright (c) %s", validAuthor)) {
+			return true
+		}
+	}
+
+	return false
+}
+
 func walk(rootPath string, passLicenseAudit func(string) bool, matchValidFile func(string) bool) ([]string, error) {
-	var err error
 	violations := []string{}
 
-	err = filepath.Walk(rootPath, func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() == false &&
+	err := filepath.WalkDir(rootPath, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !d.IsDir() &&
 			matchValidFile(path) &&
-			passLicenseAudit(path) == false {
+			!passLicenseAudit(path) {
 
 			violations = append(violations, path)
 		}

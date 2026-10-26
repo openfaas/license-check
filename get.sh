@@ -4,30 +4,12 @@ uname=$(uname)
 
 suffix=""
 case $uname in
-"Darwin")
-suffix="-darwin"
-;;
 "Linux")
     arch=$(uname -m)
     echo $arch
     case $arch in
     "aarch64")
     suffix="-arm64"
-    ;;
-    esac
-    case $arch in
-    "armv6l" | "armv7l")
-    suffix="-armhf"
-    ;;
-    esac
-    case $arch in
-    "s390x")
-    suffix="-s390x"
-    ;;
-    esac
-    case $arch in
-    "ppc64le")
-    suffix="-ppc64le"
     ;;
     esac
 ;;

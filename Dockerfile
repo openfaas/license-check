@@ -1,4 +1,4 @@
-FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:1.19-alpine as builder
+FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:1.27.3-alpine AS build
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -8,29 +8,31 @@ ARG TARGETARCH
 ARG GitCommit
 ARG Version
 
-ENV GO111MODULE=on
 ENV CGO_ENABLED=0
-ENV GOPATH=/go/src/
+ENV GO111MODULE=on
+
 WORKDIR /go/src/github.com/openfaas/license-check
 
-COPY main.go            .
-COPY go.mod             .
+COPY go.mod main.go main_test.go ./
 
-RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go test -mod=vendor $(go list ./... | grep -v /vendor/) -cover
+RUN CGO_ENABLED=0 go test -cover ./...
 
-RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} CGO_ENABLED=0 go build -mod=vendor -ldflags "-s -w -X main.GitCommit=${GitCommit} -X main.Version=${Version}" -o /usr/bin/license-check
-RUN addgroup -S app \
-    && adduser -S -g app app
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} CGO_ENABLED=0 go build \
+        --ldflags "-s -w -X main.GitCommit=${GitCommit} -X main.Version=${Version}" \
+        -o /usr/bin/license-check
 
-FROM scratch
+FROM gcr.io/distroless/static:nonroot AS ship
 
-COPY --from=builder /etc/passwd /etc/group /etc/
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /usr/bin/license-check /
+LABEL org.label-schema.license="MIT" \
+      org.label-schema.vcs-url="https://github.com/openfaas/license-check" \
+      org.label-schema.vcs-type="Git" \
+      org.label-schema.name="openfaas/license-check" \
+      org.label-schema.vendor="openfaas" \
+      org.label-schema.docker.schema-version="1.0"
 
-USER app
+COPY --from=build /usr/bin/license-check /usr/bin/
 
-VOLUME /tmp/
+USER nonroot
 
-ENTRYPOINT ["/license-check"]
+ENTRYPOINT ["/usr/bin/license-check"]
 CMD ["--help"]

@@ -12,7 +12,7 @@ The tool is currently in use across the [OpenFaaS organisation](https://github.c
 ```
 Usage:
 
-$ license-check -root $HOME/go/src/github.com/openfaas \
+$ license-check -path $HOME/go/src/github.com/openfaas \
     -verbose=false "Alex Ellis" "OpenFaaS Author(s)"
 ```
 
@@ -25,10 +25,10 @@ This is the fastest method to download for use with Docker and includes multi-ar
 Example with Golang:
 
 ```Dockerfile
-FROM ghcr.io/teamserverless/license-check:0.4.1 as license-check
-FROM golang:1.20 as build
+FROM ghcr.io/openfaas/license-check:0.5.0 AS license-check
+FROM golang:1.27 AS build
 
-COPY --from=license-check /license-check /usr/bin/
+COPY --from=license-check /usr/bin/license-check /usr/bin/
 
 RUN mkdir -p /go/src/github.com/openfaas/faas-netes
 WORKDIR /go/src/github.com/openfaas/faas-netes
@@ -47,7 +47,7 @@ RUN curl -sSfL https://github.com/openfaas/license-check/releases/download/0.2.3
       && chmod +x /usr/bin/license-check
 ```
 
-If you want to automatically download the correct binary for Linux/Darwin or armhf (Raspberry Pi) then use the `get.sh` script with the following:
+If you want to automatically download the correct binary for Linux (amd64/arm64) then use the `get.sh` script with the following:
 
 ```Dockerfile
 RUN curl -sLSf https://raw.githubusercontent.com/openfaas/license-check/master/get.sh | sh
@@ -74,5 +74,5 @@ Then once the issue is cleared for working on, go ahead and raise a PR making su
 
 ### Development / hacking
 
-Go 1.19 or newer is required
+Go 1.27 or newer is required
 
