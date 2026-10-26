@@ -1,3 +1,3 @@
 module github.com/openfaas/license-check
 
-go 1.18
+go 1.27
